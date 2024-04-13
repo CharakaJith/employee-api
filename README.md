@@ -85,6 +85,9 @@ Employee-API is designed to be efficient, scalable, and secure, providing a seam
    npm run dev
    ```
 
+## Contact
+Email: [charaka.info@gmail.com](mailto:charaka.info@gmail.com) | LinkedIn: [Charaka Jith Gunasinghe](https://www.linkedin.com/in/charaka-gunasinghe-6742861b9/)
+
 <!-- MARKDOWN LINKS & IMAGES -->
 [Node.js]: https://img.shields.io/badge/Node.js-12A952?style=for-the-badge&logo=node.js&logoColor=white
 [Node-url]: https://nodejs.org/en
