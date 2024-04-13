@@ -4,7 +4,7 @@ const { USER_ROLE } = require('../enum/role');
 const { LOG_TYPE } = require('../enum/logType');
 const { STATUS_CODE } = require('../enum/statusCode');
 const AdminService = require('../services/admin.service');
-const logger = require('../middlewares/log/logger');
+const logger = require('../middlewares/logger/logger');
 
 const AdminController = {
     adminSignup: async (req, res) => {

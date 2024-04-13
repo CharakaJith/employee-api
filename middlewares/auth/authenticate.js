@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { STATUS_CODE } = require('../../enum/statusCode');
 const { LOG_TYPE } = require('../../enum/logType');
-const logger = require('../log/logger');
+const logger = require('../logger/logger');
 
 const authenticate = async (req, res, next) => {
     try {

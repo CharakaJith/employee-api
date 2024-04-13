@@ -87,9 +87,8 @@ Employee-API is designed to be efficient, scalable, and secure, providing a seam
 
 ## Documentations
 
-- [Download API Documentation](https://jith420.atlassian.net/l/cp/f5G0TvyW)
-- [Download Getting Started](https://jith420.atlassian.net/l/cp/XuHvyqa7)
-
+- [API Documentation](https://jith420.atlassian.net/l/cp/f5G0TvyW)
+- [Getting Started](https://jith420.atlassian.net/l/cp/XuHvyqa7)
 
 
 ## Contact

@@ -2,7 +2,7 @@ const ERROR_MESSAGE = require('../constants/error.message');
 const EmployeeService = require('../services/employee.service');
 const { LOG_TYPE } = require('../enum/logType');
 const { STATUS_CODE } = require('../enum/statusCode');
-const logger = require('../middlewares/log/logger');
+const logger = require('../middlewares/logger/logger');
 
 const EmployeeController = {
     createEmployee: async (req, res) => {

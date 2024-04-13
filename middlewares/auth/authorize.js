@@ -1,6 +1,6 @@
 const { STATUS_CODE } = require('../../enum/statusCode');
 const { LOG_TYPE } = require('../../enum/logType');
-const logger = require('../log/logger');
+const logger = require('../logger/logger');
 
 const authorize = (...allowedRoles) => {
     checkRole = async (req, res, next) => {
