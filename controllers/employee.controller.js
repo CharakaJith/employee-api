@@ -211,7 +211,11 @@ const EmployeeController = {
             }
 
             // delete employee record
-            await EmployeeService.changeEmployeeStatusById(employee.id);
+            const employeeDetails = {
+                id: id,
+                empStatus: false
+            }
+            await EmployeeService.updateEmployeeDetails(employeeDetails);
 
             res.status(200).json({
                 success: true,

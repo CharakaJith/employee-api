@@ -1,6 +1,12 @@
 const models = require('../models');
 
 const EmployeeService = {
+    /**
+     * Function to create a new record in table "employee"
+     * 
+     * @param {Object} employeeDetails: employee details object 
+     * @returns a newly created employee
+     */
     createNewEmployee: async (employeeDetails) => {
         try {
             console.log(employeeDetails);
@@ -10,6 +16,12 @@ const EmployeeService = {
         }
     },
 
+    /**
+     * Function to fetch a record from table "employee" by column 'empAdminId' and 'empStatus'
+     * 
+     * @param {Int} adminId: id of the admin 
+     * @returns an object of employee details if exists, else null
+     */
     getAllEmployees: async (adminId) => {
         try {
             return await models.Employee.findAll({
@@ -23,6 +35,12 @@ const EmployeeService = {
         }
     },
 
+    /**
+     * Function to fetch a record from table "employee" by column 'id' and 'empStatus'
+     * 
+     * @param {Int} employeeId: id of the employee 
+     * @returns an object of employee details if exists, else null
+     */
     getEmployeeById: async (employeeId) => {
         try {
             return await models.Employee.findOne({
@@ -36,6 +54,12 @@ const EmployeeService = {
         }
     },
 
+    /**
+     * Function to fetch a record from table "employee" by column 'empNo' and 'empAdminId'
+     * @param {String} employeeNo: number of the employee 
+     * @param {Int} adminId: id of the admin 
+     * @returns an object of employee details if exists, else null
+     */
     getEmployeeByNumber: async (employeeNo, adminId) => {
         try {
             return await models.Employee.findOne({
@@ -49,6 +73,12 @@ const EmployeeService = {
         }
     },
 
+    /**
+     * Function to update an existing record in table "employee" by column 'id'
+     * 
+     * @param {Object} employeeDetails: employee detail object 
+     * @returns an array of updated employee details and the number of records affected
+     */
     updateEmployeeDetails: async (employeeDetails) => {
         try {
             return await models.Employee.update(employeeDetails, {
@@ -59,21 +89,6 @@ const EmployeeService = {
             });
         } catch (error) {
             throw new Error(`Internal server error while updating employee by id: ${error.message}`);
-        }
-    },
-
-    changeEmployeeStatusById: async (employeeId) => {
-        try {
-            return await models.Employee.update({
-                    empStatus: false
-                },
-                {
-                where: {
-                    id: employeeId,
-                },                
-            });
-        } catch (error) {
-            throw new Error(`Internal server error while deleting employee by id: ${error.message}`);
         }
     }
 };
