@@ -39,14 +39,14 @@ Employee-API is designed to be efficient, scalable, and secure, providing a seam
    ```bash
    npm install
    ```   
-   ii. Create an `.env` file
+   ii. Create an `.env.dev` file
    ```bash
-   touch .env
+   touch .env.dev
    ```
 
-### `.env` files setup
+### `.env.dev` files setup
 
-1. Enter following content in the `.env` file in the server
+1. Enter following content in the `.env.dev` file in the server
     ```bash
    # environment variables
     NODE_ENV=development
@@ -84,6 +84,13 @@ Employee-API is designed to be efficient, scalable, and secure, providing a seam
    ```bash
    npm run dev
    ```
+
+## Documentations
+
+- API Documentation: [Download](https://jith420.atlassian.net/l/cp/f5G0TvyW)
+- Getting Started: [Download](https://jith420.atlassian.net/l/cp/XuHvyqa7)
+
+
 
 ## Contact
 Email: [charaka.info@gmail.com](mailto:charaka.info@gmail.com) | LinkedIn: [Charaka Jith Gunasinghe](https://www.linkedin.com/in/charaka-gunasinghe-6742861b9/)
