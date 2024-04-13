@@ -5,11 +5,14 @@ const EmployeeSchema = require('../schemas/employee.schema');
 const ValidateRequestBody = require('../middlewares/validators/request.validator');
 const EmployeeController = require('../controllers/employee.controller');
 const checkAuth = require('../middlewares/auth/authenticate');
+const checkRole = require('../middlewares/auth/authorize');
+const { USER_ROLE } = require('../enum/role');
 
 router.use(checkAuth);
+router.use(checkRole(USER_ROLE.ADMIN));
 
 router.post(
-    '/', 
+    '/',     
     checkSchema(EmployeeSchema.validateEmployee),
     ValidateRequestBody,
     EmployeeController.createEmployee
