@@ -1,5 +1,8 @@
 const ERROR_MESSAGE = require('../constants/error.message');
 const EmployeeService = require('../services/employee.service');
+const { LOG_TYPE } = require('../enum/logType');
+const { STATUS_CODE } = require('../enum/statusCode');
+const logger = require('../middlewares/log/logger');
 
 const EmployeeController = {
     createEmployee: async (req, res) => {
@@ -18,8 +21,8 @@ const EmployeeController = {
                 empNo: no,
                 empName: name,
                 empAddressLine1: addressLineOne,
-                empAddressLine2: addressLineTwo ? addressLineTwo : null,
-                empAddressLine3: addressLineThree ? addressLineThree : null,
+                empAddressLine2: addressLineTwo || null,
+                empAddressLine3: addressLineThree || null,
                 empDateOfJoin: dateOfJoin,
                 empStatus: status,
                 empImage: image,
@@ -27,17 +30,19 @@ const EmployeeController = {
             };
             const newEmployee = await EmployeeService.createNewEmployee(employeeDetails);
 
-            res.status(200).json({
+            res.status(STATUS_CODE.OK).json({
                 success: true,
                 data: newEmployee,
             });
+
+            logger(LOG_TYPE.INFO, true, STATUS_CODE.OK, `employee ${newEmployee.id}: ${newEmployee.empName} created`, req);
         } catch (error) {
-            res.status(400).json({
+            res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
-                error: [ {
-                    msg: error.message 
-                }],
+                error: error.message
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }        
     },
 
@@ -47,17 +52,19 @@ const EmployeeController = {
 
             const employees = await EmployeeService.getAllEmployees(adminId);
 
-            res.status(200).json({
+            res.status(STATUS_CODE.OK).json({
                 success: true,
                 data: employees,
             });
+
+            logger(LOG_TYPE.INFO, true, STATUS_CODE.OK, `all employees fetched for admin ${adminId}`, req);
         } catch (error) {
-            res.status(400).json({
+            res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
-                error: [ {
-                    msg: error.message 
-                }],
+                error: error.message,
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }
     },
 
@@ -66,26 +73,22 @@ const EmployeeController = {
             const id = parseInt(req.params.id);
             const adminId = req.user.id;
             
-            // get and validate employee
-            const employee = await EmployeeService.getEmployeeById(id);
-            if (!employee) {
-                throw new Error(ERROR_MESSAGE.INVALID_EMP_ID);
-            }
-            if (employee.empAdminId != adminId) {
-                throw new Error(ERROR_MESSAGE.PERMISSION_DENIED);
-            }
+            // validate and get employee
+            const employee = await validateEmployee(id, adminId);
 
-            res.status(200).json({
+            res.status(STATUS_CODE.OK).json({
                 success: true,
                 data: employee,
             });
+
+            logger(LOG_TYPE.INFO, true, STATUS_CODE.OK, `employee ${employee.id}: ${employee.empName} fetched`, req);
         } catch (error) {
-            res.status(400).json({
+            res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
-                error: [ {
-                    msg: error.message 
-                }],
+                error: error.message,
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }
     },
 
@@ -95,14 +98,8 @@ const EmployeeController = {
             const id = parseInt(req.params.id);
             const adminId = req.user.id;
 
-            // get and validate employee
-            const employee = await EmployeeService.getEmployeeById(id);
-            if (!employee) {
-                throw new Error(ERROR_MESSAGE.INVALID_EMP_ID);
-            }
-            if (employee.empAdminId != adminId) {
-                throw new Error(ERROR_MESSAGE.PERMISSION_DENIED);
-            }
+            // validate and get employee
+            const employee = await validateEmployee(id, adminId);
 
             // check if employee number is taken
             const employeeByNum = await EmployeeService.getEmployeeByNumber(no, adminId);
@@ -113,31 +110,33 @@ const EmployeeController = {
 
             // update employee details
             const employeeDetails = {
-                id: id,
+                id: employee.id,
                 empNo: no,
                 empName: name,
                 empAddressLine1: addressLineOne,
-                empAddressLine2: addressLineTwo ? addressLineTwo : null,
-                empAddressLine3: addressLineThree ? addressLineThree : null,
+                empAddressLine2: addressLineTwo || null,
+                empAddressLine3: addressLineThree || null,
                 empDateOfJoin: dateOfJoin,
                 empStatus: status,
                 empImage: image,
-                empAdminId: req.user.id,
+                empAdminId: adminId,
             };
             await EmployeeService.updateEmployeeDetails(employeeDetails);
             const updatedEmployee = await EmployeeService.getEmployeeById(id);
             
-            res.status(200).json({
+            res.status(STATUS_CODE.OK).json({
                 success: true,
                 data: updatedEmployee,
             });
+
+            logger(LOG_TYPE.INFO, true, STATUS_CODE.OK, `employee ${updatedEmployee.id}: ${updatedEmployee.empName} details updated`, req);
         } catch (error) {
-            res.status(400).json({
+            res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
-                error: [ {
-                    msg: error.message 
-                }],
+                error: error.message,
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }
     },
 
@@ -147,14 +146,8 @@ const EmployeeController = {
             const id = parseInt(req.params.id);
             const adminId = req.user.id;
 
-            // get and validate employee
-            const employee = await EmployeeService.getEmployeeById(id);
-            if (!employee) {
-                throw new Error(ERROR_MESSAGE.INVALID_EMP_ID);
-            }
-            if (employee.empAdminId != adminId) {
-                throw new Error(ERROR_MESSAGE.PERMISSION_DENIED);
-            }
+            // validate and get employee
+            const employee = await validateEmployee(id, adminId);
 
             // check if employee number is taken
             if (no) {
@@ -166,8 +159,8 @@ const EmployeeController = {
 
             // update employee details
             const employeeDetails = {
-                id: id,
-                empAdminId: req.user.id,
+                id: employee.id,
+                empAdminId: adminId,
                 empNo: no || null,
                 empName: name || null,
                 empAddressLine1: addressLineOne || null,
@@ -182,17 +175,19 @@ const EmployeeController = {
             await EmployeeService.updateEmployeeDetails(employeeDetails);
             const updatedEmployee = await EmployeeService.getEmployeeById(id);
             
-            res.status(200).json({
+            res.status(STATUS_CODE.OK).json({
                 success: true,
                 data: updatedEmployee,
             });
+
+            logger(LOG_TYPE.INFO, true, STATUS_CODE.OK, `employee ${updatedEmployee.id}: ${updatedEmployee.empName} details updated`, req);
         } catch (error) {
-            res.status(400).json({
+            res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
-                error: [ {
-                    msg: error.message 
-                }],
+                error: error.message,
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }
     }, 
 
@@ -201,35 +196,50 @@ const EmployeeController = {
             const id = parseInt(req.params.id);
             const adminId = req.user.id;
             
-            // get and validate employee
-            const employee = await EmployeeService.getEmployeeById(id);
-            if (!employee) {
-                throw new Error(ERROR_MESSAGE.INVALID_EMP_ID);
-            }
-            if (employee.empAdminId != adminId) {
-                throw new Error(ERROR_MESSAGE.PERMISSION_DENIED);
-            }
+            // validate and get employee
+            const employee = await validateEmployee(id, adminId);
 
             // delete employee record
             const employeeDetails = {
-                id: id,
+                id: employee.id,
                 empStatus: false
             }
             await EmployeeService.updateEmployeeDetails(employeeDetails);
 
-            res.status(200).json({
+            res.status(STATUS_CODE.OK).json({
                 success: true,
                 data: 'Employee deleted successfully!',
             });
+
+            logger(LOG_TYPE.INFO, true, STATUS_CODE.OK, `employee ${employee.id}: ${employee.empName} archived`, req);
         } catch (error) {
-            res.status(400).json({
+            res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
-                error: [ {
-                    msg: error.message 
-                }],
+                error: error.message,
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }
-    }
+    },    
 };
+
+/**
+ * Function to validate and get employee details
+ * 
+ * @param {Int} employeeId: id of the employee 
+ * @param {Int} adminId: id of the admin 
+ * @returns an object of employee details if valid, else throw an error
+ */
+async function validateEmployee(employeeId, adminId) {
+    const employee = await EmployeeService.getEmployeeById(employeeId);
+    if (!employee) {
+        throw new Error(ERROR_MESSAGE.INVALID_EMP_ID);
+    }
+    if (employee.empAdminId != adminId) {
+        throw new Error(ERROR_MESSAGE.PERMISSION_DENIED);
+    }
+
+    return employee;
+}
 
 module.exports = EmployeeController;

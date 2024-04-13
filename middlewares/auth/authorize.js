@@ -1,21 +1,25 @@
+const { STATUS_CODE } = require('../../enum/statusCode');
+const { LOG_TYPE } = require('../../enum/logType');
+const logger = require('../log/logger');
+
 const authorize = (...allowedRoles) => {
     checkRole = async (req, res, next) => {
         try {
-            console.log(req.user);
-            console.log(allowedRoles);
             const userRole = req.user.role;
             
             if (!allowedRoles.includes(userRole)) {
-                throw new Error();
+                throw new Error('Forbidden request!');
             }
 
             next();
             
         } catch (error) {
-            return res.status(403).json({
+            res.status(STATUS_CODE.FORBIDDEN).json({
                 success: false,
-                error: 'Forbidden request!'
+                error: error.message
             });
+
+            logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
         }
     }
     

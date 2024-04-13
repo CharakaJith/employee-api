@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken');
+const { STATUS_CODE } = require('../../enum/statusCode');
+const { LOG_TYPE } = require('../../enum/logType');
+const logger = require('../log/logger');
 
 const authenticate = async (req, res, next) => {
     try {
@@ -9,10 +12,12 @@ const authenticate = async (req, res, next) => {
 
         next();
     } catch (error) {
-        return res.status(401).json({
+        res.status(STATUS_CODE.UNAUTHORIZED).json({
             success: false,
             error: 'Authentication failed!'
         });
+
+        logger(LOG_TYPE.ERROR, false, STATUS_CODE.BAD_REQUEST, `${error.message}`, req);
     }
 };
 

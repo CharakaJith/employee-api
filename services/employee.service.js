@@ -9,7 +9,6 @@ const EmployeeService = {
      */
     createNewEmployee: async (employeeDetails) => {
         try {
-            console.log(employeeDetails);
             return await models.Employee.create(employeeDetails);
         } catch (error) {
             throw new Error(`Internal server error while creating a new employee: ${error.message}`);
