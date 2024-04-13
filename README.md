@@ -78,9 +78,10 @@ Employee-API is designed to be efficient, scalable, and secure, providing a seam
    npm run seed:up:all
    ```
 
-### Start the server
-    
-    ```bash
+### Start the project
+
+1. Start development server
+   ```bash
    npm run dev
    ```
 
