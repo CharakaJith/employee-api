@@ -1,3 +1,4 @@
+const fs = require('fs');
 const ERROR_MESSAGE = require('../constants/error.message');
 const EmployeeService = require('../services/employee.service');
 const { LOG_TYPE } = require('../enum/logType');
@@ -7,8 +8,13 @@ const logger = require('../middlewares/logger/logger');
 const EmployeeController = {
     createEmployee: async (req, res) => {
         try {
-            const { no, name, addressLineOne, addressLineTwo, addressLineThree, dateOfJoin, status, image } = req.body;
+            const { no, name, addressLineOne, addressLineTwo, addressLineThree, dateOfJoin, status } = req.body;            
             const adminId = req.user.id;
+
+            const image = req.file ? req.file.filename : null;
+            if (!image) {
+                throw new Error(ERROR_MESSAGE.IMAGE_NOT_UPLOAD);
+            }
 
             // check if employee number is taken
             const employee = await EmployeeService.getEmployeeByNumber(no, adminId);
@@ -94,9 +100,14 @@ const EmployeeController = {
 
     updateEmployeeDetails: async (req, res) => {
         try {
-            const { no, name, addressLineOne, addressLineTwo, addressLineThree, dateOfJoin, status, image } = req.body;
+            const { no, name, addressLineOne, addressLineTwo, addressLineThree, dateOfJoin, status } = req.body;
             const id = parseInt(req.params.id);
             const adminId = req.user.id;
+
+            const image = req.file ? req.file.filename : null;
+            if (!image) {
+                throw new Error(ERROR_MESSAGE.IMAGE_NOT_UPLOAD);
+            }
 
             // validate and get employee
             const employee = await validateEmployee(id, adminId);
@@ -142,9 +153,11 @@ const EmployeeController = {
 
     partialUpdateEmployee: async (req, res) => {
         try {
-            const { no, name, addressLineOne, addressLineTwo, addressLineThree, dateOfJoin, status, image } = req.body;
+            const { no, name, addressLineOne, addressLineTwo, addressLineThree, dateOfJoin, status } = req.body;
             const id = parseInt(req.params.id);
             const adminId = req.user.id;
+
+            const image = req.file ? req.file.filename : null;
 
             // validate and get employee
             const employee = await validateEmployee(id, adminId);

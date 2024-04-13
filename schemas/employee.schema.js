@@ -101,15 +101,6 @@ const EmployeeSchema = {
             isBoolean: {
                 errorMessage: 'Employee status must be either true or false!',
             }
-        },
-        image: {
-            exists: {
-                errorMessage: 'Employee image is not updated!',
-                options: { checkFalsy: true }
-            },
-            isURL: {
-                errorMessage: 'Employee image must be an URL!',
-            }
         }
     },
 
@@ -238,18 +229,6 @@ const EmployeeSchema = {
             },
             isBoolean: {
                 errorMessage: 'Employee status must be either true or false!',
-            }
-        },
-        image: {
-            optional: { 
-                nullable: true 
-            },
-            exists: {
-                errorMessage: 'Employee image is not updated!',
-                options: { checkFalsy: true }
-            },
-            isURL: {
-                errorMessage: 'Employee image must be an URL!',
             }
         }
     },
